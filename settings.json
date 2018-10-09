@@ -6,7 +6,7 @@
     "EthereumRpcUrl": "https://ropsten.infura.io/v3/9aa49b6a4afa4b8fb1095fe75526827c",
     "RabbitMq": {
       "Host": "rabbitmq",
-      "ExternalHost": "127.0.0.1",
+      "ExternalHost": "rabbitmq",
       "Port": 5672,
       "Username": "rabbitmq",
       "Password": "rabbitmq",

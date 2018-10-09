@@ -29,9 +29,20 @@ services:
     ports:
     - "15672:15672"
     - "5672:5672"
-
+  thirdparty:
+    image: alpine
+    links:
+    - rabbitmq
+    - mongo
+    - mongo-express
+  ether:
+    image: alpine
+    links:
+    - ethereumindexer
+    - ethereumapi
   ethereumindexer:
     image: lykkex/lykke-ethereum-indexer-jobs:release
+    restart: on-failure
     environment:
       SettingsUrl: ${SettingsUrl}
       ConnectionStrings__ConnectionString: ${SettingsUrl}
@@ -51,10 +62,13 @@ services:
     - rabbitmq
     ports:
     - "5001:5000"
+    links:
+     - rabbitmq
     volumes:
     - "./settings.json:/app/settings.json"
 
   ethereumapi:
+    restart: on-failure
     image: lykkex/lykke-ethereum-indexer-api:release
     environment:
       SettingsUrl: ${SettingsUrl}
@@ -64,5 +78,7 @@ services:
     - mongo
     - mongo-express
     - rabbitmq
+    links:
+     - rabbitmq
     ports:
     - "5002:5000"
