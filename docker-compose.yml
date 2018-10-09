@@ -31,8 +31,9 @@ services:
     - "5672:5672"
 
   ethereumindexer:
-    image: lykkex/lykke-service-ethereumjob:release
+    image: lykkex/lykke-ethereum-indexer-jobs:release
     environment:
+      SettingsUrl: ${SettingsUrl}
       ConnectionStrings__ConnectionString: ${SettingsUrl}
       IndexerInstanceSettings__IndexerId: ${IndexerId}
       IndexerInstanceSettings__ThreadAmount: ${ThreadAmount}
@@ -54,7 +55,7 @@ services:
     - "./settings.json:/app/settings.json"
 
   ethereumapi:
-    image: lykkex/lykke-service-ethereumapi:release
+    image: lykkex/lykke-ethereum-indexer-api:release
     environment:
       SettingsUrl: ${SettingsUrl}
     volumes:

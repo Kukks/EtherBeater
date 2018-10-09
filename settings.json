@@ -1,11 +1,11 @@
 {
   "EthereumIndexer": {
     "DB": {
-      "MongoDBConnectionString": "mongodb://root:example@127.0.0.1:27017"
+      "MongoDBConnectionString": "mongodb://root:example@mongo:27017"
     },
     "EthereumRpcUrl": "https://ropsten.infura.io/v3/9aa49b6a4afa4b8fb1095fe75526827c",
     "RabbitMq": {
-      "Host": "127.0.0.1",
+      "Host": "rabbitmq",
       "ExternalHost": "127.0.0.1",
       "Port": 5672,
       "Username": "rabbitmq",
