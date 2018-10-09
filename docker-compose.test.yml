@@ -1,0 +1,67 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+    - 27017:27017
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+    - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+    - "15672:15672"
+    - "5672:5672"
+
+  ethereumindexer:
+    image: indexer:local
+    environment:
+      ConnectionStrings__ConnectionString: ${SettingsUrl}
+      IndexerInstanceSettings__IndexerId: ${IndexerId}
+      IndexerInstanceSettings__ThreadAmount: ${ThreadAmount}
+      IndexerInstanceSettings__StartBlock: ${StartBlock}
+      IndexerInstanceSettings__StopBlock: ${StopBlock}
+      IndexerInstanceSettings__BalancesStartBlock: ${BalancesStartBlock}
+      IndexerInstanceSettings__IndexBalances: ${IndexBalances}
+      IndexerInstanceSettings__IndexBlocks: ${IndexBlocks}
+      IndexerInstanceSettings__SendEventsToRabbit: ${SendEventsToRabbit}
+      IndexerInstanceSettings__ContractsIndexerThreadAmount: ${ContractsIndexerThreadAmount}
+      IndexerInstanceSettings__IndexContracts: ${IndexContracts}
+    depends_on:
+    - mongo
+    - mongo-express
+    - rabbitmq
+    ports:
+    - "5001:5000"
+    volumes:
+    - "./settings.json:/app/settings.json"
+
+  ethereumapi:
+    image: eth-api:local
+    environment:
+      SettingsUrl: ${SettingsUrl}
+    volumes:
+    - "./settings.json:/app/settings.json"
+    depends_on:
+    - mongo
+    - mongo-express
+    - rabbitmq
+    ports:
+    - "5002:5000"
