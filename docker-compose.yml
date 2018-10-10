@@ -29,17 +29,7 @@ services:
     ports:
     - "15672:15672"
     - "5672:5672"
-  thirdparty:
-    image: alpine
-    links:
-    - rabbitmq
-    - mongo
-    - mongo-express
-  ether:
-    image: alpine
-    links:
-    - ethereumindexer
-    - ethereumapi
+
   ethereumindexer:
     image: lykkex/lykke-ethereum-indexer-jobs:release
     restart: on-failure
@@ -62,10 +52,10 @@ services:
     - rabbitmq
     ports:
     - "5001:5000"
-    links:
-     - rabbitmq
     volumes:
     - "./settings.json:/app/settings.json"
+    - "./wait-for-it.sh:/app/wait-for-it.sh"
+    entrypoint: ["./wait-for-it.sh", "rabbitmq:5672", "--", "dotnet", "Lykke.Job.EthereumSamurai.dll"]
 
   ethereumapi:
     restart: on-failure
@@ -74,6 +64,8 @@ services:
       SettingsUrl: ${SettingsUrl}
     volumes:
     - "./settings.json:/app/settings.json"
+    - "./wait-for-it.sh:/app/wait-for-it.sh"
+    entrypoint: ["./wait-for-it.sh", "rabbitmq:5672", "--", "dotnet", "Lykke.Service.EthereumSamurai.dll"]
     depends_on:
     - mongo
     - mongo-express
